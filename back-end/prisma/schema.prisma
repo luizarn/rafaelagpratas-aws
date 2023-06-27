@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique @db.VarChar(255)
+  password  String     @db.VarChar(255)
+  name      String     @db.VarChar(255)
+  surname   String     @db.VarChar(255)
+  cpf       String     @unique @db.VarChar(255)
+  isOwner   Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  phone     String     @db.VarChar(255)
+  Cart      Cart[]
+  Purchase  Purchase[]
+  Session   Session[]
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  title     String    @unique @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Product   Product[]
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  title     String    @unique @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Product   Product[]
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique @db.VarChar(255)
+  description String    @db.VarChar(255)
+  price       Decimal   @db.Decimal(10, 2)
+  publicUrl   String
+  size        Int?
+  categoryId  Int
+  tagId       Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  quantity    Int       @default(0)
+  emphasis    Boolean   @default(false)
+  launch      Boolean   @default(false)
+  Category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  Tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  CartItem    CartItem?
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  User      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  Purchase  Purchase[]
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int      @unique(map: "cart_item_product_id_unique")
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  cartId    Int
+  date      DateTime @default(now())
+  total     Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
