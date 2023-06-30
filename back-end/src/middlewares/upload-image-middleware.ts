@@ -26,8 +26,6 @@ function createUploadMiddleware() {
   const upload = multer({
     storage: multer.memoryStorage(),
   });
-  console.log('esta chegando aqui');
-  console.log('photo');
   return upload.single('photo');
 }
 

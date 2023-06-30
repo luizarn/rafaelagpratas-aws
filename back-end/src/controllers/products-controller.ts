@@ -7,9 +7,12 @@ import { AuthenticatedRequest } from '../middlewares/authentication-middleware';
 
 export async function getCategories(req: Request, res: Response, next: NextFunction): Promise<Response> {
   try {
+    console.log('chegando  no controller');
     const categories = await productsService.getCategories();
+    console.log(categories);
     return res.status(httpStatus.OK).send(categories);
   } catch (e) {
+    console.log(e);
     next(e);
   }
 }

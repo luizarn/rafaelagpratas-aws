@@ -3,6 +3,7 @@ import { notFoundError } from '../../errors/not-found-error';
 import { prisma } from '../../config';
 
 async function getCategories() {
+  console.log('ta chegando no repository');
   return prisma.category.findMany();
 }
 

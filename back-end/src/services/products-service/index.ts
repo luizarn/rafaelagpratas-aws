@@ -13,8 +13,9 @@ interface UpdatedFields {
 }
 
 async function getCategories() {
+  console.log('ta chegando no service');
   const categories = await productsRepository.getCategories();
-
+  console.log(categories);
   if (!categories) throw notFoundError();
 
   return categories;
